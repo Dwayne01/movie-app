@@ -15,14 +15,9 @@ const Search = () => {
     setSearchQuery(query);
   }
 
-   React.useEffect(() => {
-    getMovie();
-   }, []);
-
   const getMovie = async () => {
-    const res = await fetch('https://api.themoviedb.org/3/movie/popular?api_key=841d7b4def08ddc32e8ee6cb00505794&language=en-US&page=1')
+    const res = await fetch(`https://api.themoviedb.org/3/search/${category}?api_key=841d7b4def08ddc32e8ee6cb00505794&language=en-US&query=${searchQuery}&page=1&include_adult=false`)
       .then(response => response.json())
-    
     setMovies(res.results);
   }
 
@@ -37,7 +32,8 @@ const Search = () => {
           width="100%"
           borderRadius="4"
           py="3"
-          px="1"
+            px="1"
+            onChangeText={onChangeSearch}
           fontSize="14"
           mt="3"
           InputLeftElement={
@@ -72,13 +68,11 @@ const Search = () => {
                   setCategory(itemValue);
                 }}
               >
-                <Select.Item label="Now Playing" value="now_playing" />
-                <Select.Item label="Popular" value="popular" />
-                <Select.Item label="Top Rated" value="top_rated" />
-                <Select.Item label="Upcoming" value="upcoming" />
+                <Select.Item label="Tv Shows" value="tv" />
+                <Select.Item label="Movies" value="movie" />
               </Select>
             </FormControl>
-            <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', width: 120, backgroundColor: 'red', paddingVertical: 15, paddingHorizontal: 20,  borderRadius: 5}}>
+            <TouchableOpacity onPress={() => getMovie()} style={{flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', width: 120, backgroundColor: 'red', paddingVertical: 15, paddingHorizontal: 20,  borderRadius: 5}}>
               <EvilIcons name="search" size={24} style={{alignItems: 'center'}} color="#fff" />
               <Text style={{color: '#fff'}}>Search</Text>
             </TouchableOpacity>
@@ -91,9 +85,11 @@ const Search = () => {
         </View>
       </View>
       <View>
+        {movies.length === 0 && <Text>Please initiate search</Text>}
           {movies.map((movie, index) => (
             <MovieItem movie={movie} key={index} />
           ))}
+        
       </View>
     </ScrollView>
   );
